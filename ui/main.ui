@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>742</width>
+    <height>673</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0" columnstretch="0,1,2,2,1,1">
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="couple_r_btn">
+        <property name="text">
+         <string>커플링 매매</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLineEdit" name="invest_asset_lineEdit"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="asset_info"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Log</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="6">
+       <widget class="QTableWidget" name="list_view"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="infinite_r_btn">
+        <property name="text">
+         <string>무한매수</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="6">
+       <widget class="QTextBrowser" name="log_view"/>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QComboBox" name="coin_comboBox">
+        <property name="maxVisibleItems">
+         <number>20</number>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QComboBox" name="interval_comboBox">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentText">
+         <string/>
+        </property>
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="profit_lineEdit"/>
+      </item>
+      <item row="0" column="4">
+       <widget class="QComboBox" name="asset_rate_comboBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QCheckBox" name="repeat_checkBox">
+        <property name="text">
+         <string>반복</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QPushButton" name="trade_btn">
+        <property name="text">
+         <string>매매시작</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4" colspan="2">
+       <widget class="QPushButton" name="stop_btn">
+        <property name="text">
+         <string>매매정지</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>        코인</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>742</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>메뉴</string>
+    </property>
+    <addaction name="update_asset_menu"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="update_asset_menu">
+   <property name="text">
+    <string>자산업데이트</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

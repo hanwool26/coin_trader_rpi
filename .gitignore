@@ -1,0 +1,9 @@
+# Default ignored files
+/workspace.xml
+src/__pycache__/*
+dist/
+build/
+.idea/
+data/config.ini
+main.spec
+__pycache__/
