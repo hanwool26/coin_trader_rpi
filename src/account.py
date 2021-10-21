@@ -9,19 +9,19 @@ class Account():
 
     def get_asset(self) -> int:
         asset = self.get_balance() + self.get_locked()
-        logging.getLogger('LOG').info(f'asset : {asset} 원')
+        logging.info(f'asset : {asset} 원')
         return asset
 
     def get_balance(self) -> int:
         my_info = self.upbit.get_balances()[0]
         balance = (int(my_info['balance'].split('.')[0]))
-        logging.getLogger('LOG').info(f"balance : {balance} 원")
+        logging.info(f"balance : {balance} 원")
         return balance
 
     def get_locked(self) -> int:
         my_info = self.upbit.get_balances()[0]
         locked = (int(my_info['locked'].split('.')[0]))
-        logging.getLogger('LOG').info(f'locked : {locked} 원')
+        logging.info(f'locked : {locked} 원')
         return locked
 
     def buy(self, ticker, price, amount):
@@ -30,7 +30,7 @@ class Account():
             raise Exception('no enough blanace')
         else :
             ret = self.upbit.buy_limit_order(ticker, price, amount)
-            logging.getLogger('LOG').info(f'success to buy {amount} of {ticker} at {price}')
+            logging.info(f'success to buy {amount} of {ticker} at {price}')
         return ret
 
     def sell(self, ticker, price, amount):
@@ -49,7 +49,7 @@ class Account():
         try:
             self.upbit = pyupbit.Upbit(self.access_key, self.secret_key)
         except Exception as e:
-            logging.getLogger('LOG').info(e)
+            logging.log.info(e)
 
         if self.upbit != None:
-            logging.getLogger('LOG').info('Success to access my account')
+            logging.info('Success to access my account')
