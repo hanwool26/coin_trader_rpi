@@ -3,12 +3,9 @@ import logging
 from src.account import *
 from src.config import *
 from src.manager import *
-from src.load_file import *
-from main_window import *
 import sys
-from PyQt5.QtWidgets import *
 from src.util import *
-import qdarkstyle
+from src.socket_server import *
 
 # COUPLE_FILE_PATH =
 
@@ -21,6 +18,7 @@ TEST_JSON = {'coin_name': '리플',
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
+    socket = Socket_Server(9999)
     config = Config()
     config.load_config()
     access_key, secret_key = config.get_api_key()
@@ -31,6 +29,10 @@ if __name__ == '__main__':
     # mywindow.set_table_data(couple_list)
 
     manager = Manager(my_account)
+    while True:
+        socket.wait_for_connection()
+
+
     manager.do_start(None, 'infinite', TEST_JSON)
 
 
