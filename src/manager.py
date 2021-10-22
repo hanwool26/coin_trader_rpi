@@ -18,6 +18,9 @@ class Manager:
             primary, chain, cohesion = couple_coin[0], couple_coin[1], couple_coin[2]
             self.couple_event.insert(idx, EventCouple(idx, self.account, self.main_window, primary, chain, cohesion))
 
+    def process(self, data):
+        print(data)
+
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
         if trade == 'couple':
             for idx in selected_id:
