@@ -1,13 +1,20 @@
 import os
 import logging
 import pyupbit
+from pyupbit.request_api import _call_public_api
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
-market_info = pyupbit.fetch_market()
 
 KRW = 'KRW'
 BTC = 'BTC'
+
+def fetch_market():
+    url = "https://api.upbit.com/v1/market/all"
+    market, req_limit_info = _call_public_api(url, isDetails=False)
+    return market
+
+market_info = fetch_market()
 
 def get_increase_rate(current_price, base_price):
     if base_price == 0 or base_price == None or current_price == None:
