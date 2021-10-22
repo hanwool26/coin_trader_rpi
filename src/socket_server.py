@@ -11,9 +11,17 @@ class Socket_Server():
         self.conn_status = False
 
         self.threads = [
-            threading.Thread(target=self.__send, daemon=True),
-            threading.Thread(target=self.__recv, daemon=True),
+            threading.Thread(target=self.__send, daemon=True, args=(self.conn, )),
+            threading.Thread(target=self.__recv, daemon=True, args=(self.conn, )),
         ]
+
+    def __send(self, conn):
+        print('send+')
+        pass
+
+    def __recv(self, conn):
+        print('recv+')
+        pass
 
     def wait_for_connection(self):
         self.server_sock.bind(('', self.port))
@@ -21,7 +29,7 @@ class Socket_Server():
         self.conn, peer = self.server_sock.accept()
 
         logging.info(f'connection success')
-        self.conn_statue = True
+        self.conn_status = True
 
         for t in self.threads:
             t.join()
