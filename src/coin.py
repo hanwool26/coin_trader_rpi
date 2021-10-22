@@ -18,7 +18,7 @@ class Coin:
                     break
 
         if ticker == None:
-            logging.getLogger('LOG').warn(f'no found {name} in market list')
+            logging.getLogger('LOG').error(f'no found {name} in market list')
 
         return ticker
 

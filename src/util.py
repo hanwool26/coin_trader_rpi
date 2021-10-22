@@ -60,7 +60,6 @@ def get_avg_price(avg_price, price, count):
 
 def get_coin_list():
     coin_list = list()
-    market_info = pyupbit.fetch_market()
     for attr in market_info:
         if 'KRW' in attr['market']:
             coin_list.append(attr['korean_name'])
@@ -86,7 +85,7 @@ def get_price_by_name(name):
                 break
 
     if ticker == None:
-        logging.getLogger('LOG').warn(f'no found {name} in market list')
+        logging.getLogger('LOG').error(f'no found {name} in market list')
     else:
         return pyupbit.get_current_price(ticker)
 

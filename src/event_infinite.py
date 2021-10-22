@@ -37,6 +37,8 @@ class EventInfinite(Event, threading.Thread):
     def do_buy(self, price, amount):
         try:
             ret = self.account.buy(self.coin.ticker, price, amount)
+            if ret == None:
+                return False
             uuid = ret['uuid']
 
             for sec in range(TIME_OUT+1):

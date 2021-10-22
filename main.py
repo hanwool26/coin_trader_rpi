@@ -14,12 +14,12 @@ import qdarkstyle
 
 # coin_name, balance, interval, repeat
 TEST_JSON = {'coin_name': '리플',
-             'balance': 100000,
+             'balance': 200000,
              'interval': 6,
              'repeat': False}
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
     config = Config()
     config.load_config()
