@@ -3,12 +3,13 @@ from src.event_infinite import *
 import logging
 from src import log
 class Manager:
-    def __init__(self, account): # main_window, couple_list):
+    def __init__(self, account, socket): # main_window, couple_list):
         self.account = account
         # self.main_window = main_window
         self.couple_event = list()
         self.infinite_event = list()
         self.infinite_idx = 0
+        self.socket = socket
 
         # if couple_list is not None:
         #    self.init_eventcouple(couple_list)
