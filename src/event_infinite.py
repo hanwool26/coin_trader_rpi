@@ -50,7 +50,7 @@ class EventInfinite(Event, threading.Thread):
                 time.sleep(1)
             return False
         except Exception as e:
-            logging.error(ret['error']['message'])
+            logging.error(f"do buy : {ret['error']['message']}")
             self.buy_count += 1
             return False
 

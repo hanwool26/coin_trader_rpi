@@ -14,7 +14,7 @@ import qdarkstyle
 
 # coin_name, balance, interval, repeat
 TEST_JSON = {'coin_name': '리플',
-             'balance': 200000,
+             'balance': 100000,
              'interval': 6,
              'repeat': False}
 
