@@ -33,7 +33,6 @@ if __name__ == '__main__':
     while True:
         socket.wait_for_connection()
 
-
     # manager.do_start(None, 'infinite', TEST_JSON)
 
 

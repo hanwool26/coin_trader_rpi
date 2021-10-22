@@ -7,7 +7,7 @@ class Coin:
         self.name = name
         self.ticker = self.from_name_to_ticker(name)
 
-        logging.getLogger('LOG').info(f'init coin : {name}({self.ticker})')
+        logging.info(f'init coin : {name}({self.ticker})')
 
     def from_name_to_ticker(self, name) -> str:
         ticker = None
@@ -18,9 +18,13 @@ class Coin:
                     break
 
         if ticker == None:
-            logging.getLogger('LOG').error(f'no found {name} in market list')
+            logging.error(f'no found {name} in market list')
 
         return ticker
 
     def get_current_price(self):
-        return pyupbit.get_current_price(self.ticker)
+        try:
+            price = pyupbit.get_current_price(self.ticker)
+            return price
+        except Exception as e:
+            logging.error(e)
