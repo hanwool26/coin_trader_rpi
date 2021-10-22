@@ -12,19 +12,22 @@ class Socket_Server():
         self.manager = manager
 
         self.threads = [
-            threading.Thread(target=self.__send, daemon=True, args=(self.conn, )),
             threading.Thread(target=self.__recv, daemon=True, args=(self.conn, )),
         ]
 
-    def __send(self, conn):
+    def __send(self, data):
         print('send+')
+        if self.conn_status != False:
+            logging.info('No connection to client')
+        else:
+            self.conn.sendall(data)
         pass
 
     def __recv(self, conn):
         print('recv+')
         while self.conn_status:
             data = self.conn.recv(1024)
-            if data != None:
+            if data != b'':
                 self.manager.process(data)
         pass
 
@@ -41,6 +44,8 @@ class Socket_Server():
 
         for t in self.threads:
             t.start()
+
+        self.send('good')
 
 
 
