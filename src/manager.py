@@ -20,6 +20,12 @@ class Manager:
             self.couple_event.insert(idx, EventCouple(idx, self.account, self.main_window, primary, chain, cohesion))
 
     def process(self, data):
+        # todo
+        # -> json format : {command, coin_name, balance, interval, repeat}
+        if data['command'] == 'do_start':
+            pass
+        elif data['command'] == 'do_stop':
+            pass
         print(data)
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
