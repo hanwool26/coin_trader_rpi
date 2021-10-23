@@ -51,9 +51,6 @@ class Socket_Server():
         for t in self.threads:
             t.start()
 
-        time.sleep(3)
-        self.send('good')
-        self.close_connection()
 
 
 
