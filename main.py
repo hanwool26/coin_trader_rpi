@@ -16,7 +16,7 @@ TEST_JSON = {'coin_name': '리플',
              'repeat': False}
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='[%(asctime)s] %(message)s')
 
     config = Config()
     config.load_config()
@@ -32,7 +32,6 @@ if __name__ == '__main__':
     socket.setManager(manager)
     # while True:
     #    socket.wait_for_connection()
-
-    manager.do_start(None, 'infinite', TEST_JSON)
+    # manager.do_start(None, 'infinite', TEST_JSON)
 
 
