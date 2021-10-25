@@ -28,11 +28,11 @@ if __name__ == '__main__':
     # load UI items from file and set the list on listView
     # mywindow.set_table_data(couple_list)
 
-    manager = Manager(my_account)
+    manager = Manager(my_account, socket)
     while True:
         socket.wait_for_connection()
 
 
-    manager.do_start(None, 'infinite', TEST_JSON)
+    # manager.do_start(None, 'infinite', TEST_JSON)
 
 
