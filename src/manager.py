@@ -28,7 +28,7 @@ class Manager:
             pass
         elif data['command'] == 'do_stop':
             pass
-        print(data)
+        print('manager.process', data)
         coin_info = dict()
         selected_id = list()
         command = data['command']

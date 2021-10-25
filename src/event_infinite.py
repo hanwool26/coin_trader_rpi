@@ -57,7 +57,7 @@ class EventInfinite(Event, threading.Thread):
     def init_trade(self):
         if self.balance <= 0:
             logging.info('잔고 부족')
-            return
+            return None
         each_asset = round(self.balance * self.RATIO_BUY, 2)
         print(f'분할 매수액 : {each_asset}')
 
@@ -96,6 +96,7 @@ class EventInfinite(Event, threading.Thread):
     def __trading(self):
         buying_asset = self.init_trade()
         if buying_asset == None:
+            self.close_thread()
             return
 
         while self.__running and self.buy_count < PER_BUY:
