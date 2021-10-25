@@ -13,9 +13,6 @@ class Socket_Server():
         self.server_sock.bind(('', port))
         self.manager = None
 
-        self.threads = [
-            threading.Thread(target=self.__recv, daemon=False),
-        ]
     def setManager(self, manager):
         self.manager = manager
 
@@ -31,6 +28,9 @@ class Socket_Server():
         print('recv+')
         while self.conn_status:
             data = self.conn.recv(1024)
+            if data.decode() == 'disconnect':
+                self.close_connection()
+                break
             if data != b'':
                 parse_data = json.loads(data.decode())
                 self.manager.process(parse_data)
@@ -41,16 +41,24 @@ class Socket_Server():
         self.conn_status = False
         self.conn.close()
 
+    def connection_thread(self):
+        threads = [
+            threading.Thread(target=self.__recv, daemon=False),
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
     def wait_for_connection(self):
         self.server_sock.listen()
         self.conn, peer = self.server_sock.accept()
 
         logging.info(f'connection success')
         self.conn_status = True
+        self.send('connect')
 
-        for t in self.threads:
-            t.start()
-
+        self.connection_thread()
 
 
 

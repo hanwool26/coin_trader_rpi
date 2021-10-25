@@ -30,8 +30,8 @@ if __name__ == '__main__':
     socket = Socket_Server(9999)
     manager = Manager(my_account, socket)
     socket.setManager(manager)
-    # while True:
-    #    socket.wait_for_connection()
+    while True:
+        socket.wait_for_connection()
     # manager.do_start(None, 'infinite', TEST_JSON)
 
 
