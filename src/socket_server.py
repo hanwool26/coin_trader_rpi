@@ -51,6 +51,7 @@ class Socket_Server():
             t.join()
 
     def wait_for_connection(self):
+        logging.info('wait for connection')
         self.server_sock.listen()
         self.conn, peer = self.server_sock.accept()
 
