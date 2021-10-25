@@ -10,6 +10,7 @@ class Manager:
         self.couple_event = list()
         self.infinite_event = list()
         self.infinite_idx = 0
+        self.socket = socket
 
         # if couple_list is not None:
         #    self.init_eventcouple(couple_list)
@@ -21,6 +22,12 @@ class Manager:
     '''
 
     def process(self, data):
+        # todo
+        # -> json format : {command, coin_name, balance, interval, repeat}
+        if data['command'] == 'do_start':
+            pass
+        elif data['command'] == 'do_stop':
+            pass
         print(data)
         coin_info = dict()
         selected_id = list()
