@@ -40,10 +40,11 @@ class Event():
         coin_info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
                f'{profit_rate} %', f'{count}/{PER_BUY}']
         logging.info(coin_info)
-        list_info = {'command':'view_update', 'ev_id':self.ev_id}
-        list_info.update({'info_list':coin_info})
-        json.dumps(list_info)
-        self.socket.send(list_info)
+        if self.socket.conn_status:
+            info = {'command':'view_update', 'ev_id':self.ev_id}
+            info.update({'info_list':coin_info})
+            info = json.dumps(info)
+            self.socket.send(info)
 
         # to do -> info update
         # self.ui_control.infinite_item_update(self.ev_id, info)
