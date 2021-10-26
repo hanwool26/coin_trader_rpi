@@ -42,7 +42,7 @@ class Manager:
             self.do_start(selected_id, trade, coin_info)
         elif command == 'do_stop':
             trade = data['trade']
-            selected_id = data['selected_id']
+            selected_id = data['sel_id']
             self.do_stop(selected_id, trade)
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
