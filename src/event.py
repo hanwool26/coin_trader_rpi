@@ -2,6 +2,7 @@ import threading
 import pyupbit
 from src.util import *
 import logging
+import json
 from src.event_couple import *
 
 STATUS_HEADER = 5 # columm number
@@ -16,6 +17,7 @@ class Event():
         self.status = 'Ready' # 'Ready' , 'Monitoring', 'Bought', 'ready to sell', 'sold'
         self.ev_id = -1
         self.coin_name = ''
+        self.socket = None
 
     def do_buy(self, ticker, amount):
         current_price = pyupbit.get_current_price(ticker)
@@ -35,9 +37,14 @@ class Event():
 
     def update_info(self, price, avg_price, amount, profit_rate, count):
         invest_asset = round(avg_price * amount, 2)
-        info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
+        coin_info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
                f'{profit_rate} %', f'{count}/{PER_BUY}']
-        logging.info(info)
+        logging.info(coin_info)
+        list_info = {'command':'view_update', 'ev_id':self.ev_id}
+        list_info.update({'info_list':coin_info})
+        json.dumps(list_info)
+        self.socket.send(list_info)
+
         # to do -> info update
         # self.ui_control.infinite_item_update(self.ev_id, info)
             # self.ui_control.update_info(info)

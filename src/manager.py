@@ -51,7 +51,7 @@ class Manager:
                 self.couple_event[idx].start()
         elif trade == 'infinite':
             # to do -> take variables which is needed to make class from json format.
-            self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, coin_info['coin_name'],
+            self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, self.socket, coin_info['coin_name'],
                                                                         coin_info['balance'], coin_info['interval'], coin_info['repeat']))
             self.infinite_event[self.infinite_idx].start()
             self.infinite_idx += 1

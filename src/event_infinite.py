@@ -9,10 +9,11 @@ BUY_PERCENT = [1, 1.05] # AVG_PRICE, AVG_PRICE * 5%
 
 class EventInfinite(Event, threading.Thread):
     pass
-    def __init__(self, idx, account, coin_name, balance, interval, repeat):
+    def __init__(self, idx, account, socket, coin_name, balance, interval, repeat):
         threading.Thread.__init__(self)
         self.ev_id = idx
         self.account = account
+        self.socket = socket
         # self.ui_control = main_window
         self.coin_name = coin_name
 
