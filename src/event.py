@@ -39,7 +39,7 @@ class Event():
         invest_asset = round(avg_price * amount, 2)
         coin_info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
                f'{profit_rate} %', f'{count}/{PER_BUY}']
-        logging.info(coin_info)
+        logging.info(self.ev_id, coin_info)
         if self.socket.conn_status:
             info = {'command':'view_update', 'ev_id':self.ev_id}
             info.update({'info_list':coin_info})
