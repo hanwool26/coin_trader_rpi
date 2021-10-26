@@ -21,7 +21,10 @@ class Socket_Server():
         if self.conn_status != True:
             logging.info('No connection to client')
         else:
-            self.conn.sendall(data.encode())
+            try:
+                self.conn.sendall(data.encode())
+            except Exception as e:
+                logging.error(e)
         pass
 
     def __recv(self):
