@@ -5,7 +5,7 @@ import logging
 from src import log
 
 class Manager:
-    def __init__(self, account, socket): # main_window, couple_list):
+    def __init__(self, socket): # main_window, couple_list):
         self.account = None
         self.socket = socket
         # self.main_window = main_window
