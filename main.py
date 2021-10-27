@@ -17,18 +17,11 @@ TEST_JSON = {'coin_name': '리플',
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='[%(asctime)s] %(message)s')
-
-    config = Config()
-    config.load_config()
-    access_key, secret_key = config.get_api_key()
-    my_account = Account(access_key, secret_key)
-    my_account.connect_account()
-
     # load UI items from file and set the list on listView
     # mywindow.set_table_data(couple_list)
 
     socket = Socket_Server(9999)
-    manager = Manager(my_account, socket)
+    manager = Manager(socket)
     socket.setManager(manager)
     while True:
         socket.wait_for_connection()

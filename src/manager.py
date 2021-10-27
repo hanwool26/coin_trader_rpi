@@ -1,10 +1,12 @@
 from src.event_couple import *
 from src.event_infinite import *
+from src.account import *
 import logging
 from src import log
+
 class Manager:
     def __init__(self, account, socket): # main_window, couple_list):
-        self.account = account
+        self.account = None
         self.socket = socket
         # self.main_window = main_window
         self.couple_event = list()
@@ -20,14 +22,16 @@ class Manager:
             primary, chain, cohesion = couple_coin[0], couple_coin[1], couple_coin[2]
             self.couple_event.insert(idx, EventCouple(idx, self.account, self.main_window, primary, chain, cohesion))
     '''
+    def get_account(self, access_key, secret_key):
+        if self.account == None:
+            self.account = Account(access_key, secret_key)
+            self.account.connect_account()
+        else:
+            logging.info("Already got account instance")
 
     def process(self, data):
         # todo
         # -> json format : {command, coin_name, balance, interval, repeat}
-        if data['command'] == 'do_start':
-            pass
-        elif data['command'] == 'do_stop':
-            pass
         print('manager.process', data)
         coin_info = dict()
         selected_id = list()
@@ -44,6 +48,10 @@ class Manager:
             trade = data['trade']
             selected_id = data['sel_id']
             self.do_stop(selected_id, trade)
+        elif command == 'account':
+            access_key = data['access_key']
+            secret_key = data['secret_key']
+            self.get_account(access_key, secret_key)
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
         if trade == 'couple':
