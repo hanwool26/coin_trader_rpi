@@ -52,6 +52,11 @@ class Manager:
             access_key = data['access_key']
             secret_key = data['secret_key']
             self.get_account(access_key, secret_key)
+        elif command == 'asset_update':
+            asset = self.account.get_asset()
+            signal = {'command':asset, 'asset':asset}
+            signal = json.dumps(signal)
+            self.socket.send(signal)
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
         if trade == 'couple':
