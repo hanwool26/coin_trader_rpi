@@ -17,27 +17,27 @@ class Socket_Server():
         self.manager = manager
 
     def send(self, data):
-        print('send+')
         if self.conn_status != True:
             logging.info('No connection to client')
         else:
             try:
                 self.conn.sendall(data.encode())
             except Exception as e:
-                logging.error(e)
+                logging.error(f'send() : {e}')
         pass
 
     def __recv(self):
-        print('recv+')
         while self.conn_status:
-            data = self.conn.recv(1024)
-            if data.decode() == 'disconnect':
-                self.close_connection()
-                break
-            if data != b'':
-                parse_data = json.loads(data.decode())
-                self.manager.process(parse_data)
-        pass
+            try:
+                data = self.conn.recv(1024)
+                if data.decode() == 'disconnect':
+                    self.close_connection()
+                    break
+                if data != b'':
+                    parse_data = json.loads(data.decode())
+                    self.manager.process(parse_data)
+            except Exception as e:
+                logging.error(f'recv() : {e}')
 
     def close_connection(self):
         print('close connection()')
