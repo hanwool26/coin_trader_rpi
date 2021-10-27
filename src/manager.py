@@ -32,9 +32,7 @@ class Manager:
     def process(self, data):
         # todo
         # -> json format : {command, coin_name, balance, interval, repeat}
-        print('manager.process', data)
         coin_info = dict()
-        selected_id = list()
         command = data['command']
         if command == 'do_start':
             selected_id = None  # for only coupling trade
