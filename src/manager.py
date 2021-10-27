@@ -52,9 +52,9 @@ class Manager:
             access_key = data['access_key']
             secret_key = data['secret_key']
             self.get_account(access_key, secret_key)
-        elif command == 'asset_update':
+        elif command == 'request_asset':
             asset = self.account.get_asset()
-            signal = {'command':asset, 'asset':asset}
+            signal = {'command':'asset_update', 'asset':asset}
             signal = json.dumps(signal)
             self.socket.send(signal)
 
