@@ -73,4 +73,28 @@ class Manager:
                 self.couple_event[idx].close_thread()
         elif trade == 'infinite':
             for idx in selected_id:
-                self.infinite_event[idx].close_thread()
+                if idx < self.infinite_idx:
+                    self.infinite_event[idx].close_thread()
+                    self.sort_event(idx)
+
+    def set_max_row(self):
+        signal = {'command':'set_max_row', 'row':self.infinite_idx}
+        signal = json.dumps(signal)
+        self.socket.send(signal)
+
+
+    def sort_event(self, id):
+        delete = self.infinite_event[id]
+        size = len(self.infinite_event)
+        for idx in range(id, size+1):
+            if idx+1 < self.infinite_idx:
+                self.infinite_event[idx] = self.infinite_event[idx+1]
+                self.infinite_event[idx].ev_id = idx
+        del delete
+        del self.infinite_event[size-1]
+        self.infinite_idx -=1
+        self.set_max_row()
+        for idx in range(len(self.infinite_event)):
+            self.infinite_event[idx].reset_list()
+            
+

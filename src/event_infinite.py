@@ -121,6 +121,11 @@ class EventInfinite(Event, threading.Thread):
         ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
         self.close()
 
+    def reset_list(self):
+        cur_price = self.coin.get_current_price()
+        self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
+                         self.buy_count)
+
     def __show_info(self):
         while self.__running:
             cur_price = self.coin.get_current_price()
