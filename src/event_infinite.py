@@ -66,7 +66,7 @@ class EventInfinite(Event, threading.Thread):
         self.avg_price = cur_price = get_above_tick_price(cur_price)  # 호가 위 매수
         buying_amount = get_buying_amount(each_asset, cur_price, 1)
         if self.do_buy(cur_price, buying_amount) != True:
-            self.close()
+            self.close(False)
             return None
 
         # self.update_progress(PER_BUY, self.buy_count)
