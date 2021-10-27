@@ -106,7 +106,7 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
                 logging.info('매도 성공')
-                self.close()
+                self.close(True)
             else:
                 self.account.cancel_order(uuid)
                 for percent in BUY_PERCENT:
@@ -119,7 +119,7 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(1)
 
         ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
-        self.close()
+        self.close(False)
 
     def reset_list(self):
         cur_price = self.coin.get_current_price()
@@ -132,20 +132,25 @@ class EventInfinite(Event, threading.Thread):
             self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price), self.buy_count)
             time.sleep(0.5)
 
-    def close(self):
+    def close(self, sold_flag):
         logging.info('무한 매수 종료')
         self.__running = False
         self.repeat = False
-        cur_price = self.avg_price = self.buy_count = self.total_amount = 0
-        self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
+        if sold_flag == False:
+            cur_price = self.avg_price = self.buy_count = self.total_amount = 0
+            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
                          self.buy_count)
+        elif sold_flag == True:
+            cur_price = self.coin.get_current_price()
+            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
+                             self.buy_count)
         # self.update_progress(PER_BUY, self.buy_count)
         with self.t_condition:
             self.t_condition.notifyAll()
 
     def close_thread(self):
         self.repeat = False
-        self.close()
+        self.close(False)
 
     def run(self):
         if self.interval == None:

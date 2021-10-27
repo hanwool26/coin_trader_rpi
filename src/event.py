@@ -46,10 +46,6 @@ class Event():
             info = json.dumps(info)
             self.socket.send(info)
 
-        # to do -> info update
-        # self.ui_control.infinite_item_update(self.ev_id, info)
-            # self.ui_control.update_info(info)
-
     def update_status(self, status):
         self.status = status
         pass

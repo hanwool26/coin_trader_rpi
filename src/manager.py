@@ -29,6 +29,8 @@ class Manager:
         else:
             logging.info("Already got account instance")
 
+
+
     def process(self, data):
         # todo
         # -> json format : {command, coin_name, balance, interval, repeat}
@@ -50,6 +52,7 @@ class Manager:
             access_key = data['access_key']
             secret_key = data['secret_key']
             self.get_account(access_key, secret_key)
+            self.init_update()
         elif command == 'request_asset':
             asset = self.account.get_asset()
             signal = {'command':'asset_update', 'asset':asset}
@@ -82,6 +85,9 @@ class Manager:
         signal = json.dumps(signal)
         self.socket.send(signal)
 
+    def init_update(self):
+        for event in self.infinite_event:
+            event.reset_list()
 
     def sort_event(self, id):
         delete = self.infinite_event[id]
