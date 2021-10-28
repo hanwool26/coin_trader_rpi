@@ -118,7 +118,7 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(1)
 
         ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
-        self.close(False)
+        self.close(True)
 
     def reset_list(self):
         cur_price = self.coin.get_current_price()
@@ -134,8 +134,8 @@ class EventInfinite(Event, threading.Thread):
     def close(self, sold_flag):
         logging.info('무한 매수 종료')
         self.__running = False
-        self.repeat = False
         if sold_flag == False:
+            self.repeat = False
             cur_price = self.avg_price = self.buy_count = self.total_amount = 0
             self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
                          self.buy_count)
@@ -155,8 +155,8 @@ class EventInfinite(Event, threading.Thread):
         if self.interval == None:
             return
         self.__running = True
-        logging.info(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval//INTERVAL} 시간, 투자금액 : {self.balance} 원')
         while True:
+            logging.info(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
             for t in self.threads:
                 t.start()
 

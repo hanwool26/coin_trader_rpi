@@ -79,7 +79,7 @@ class Manager:
         elif trade == 'infinite':
             for idx in selected_id:
                 if idx < self.infinite_idx:
-                    self.infinite_event[idx].close_thread()
+                    self.infinite_event[idx].close(False)
                     self.sort_event(idx)
 
     def set_max_row(self):
