@@ -18,7 +18,7 @@ class EventInfinite(Event, threading.Thread):
         self.coin_name = coin_name
 
         self.coin = Coin(self.coin_name)
-        self.RATIO_BUY = 1/PER_BUY
+        self.RATIO_BUY = 1/(PER_BUY*2)
 
         self.interval = interval * INTERVAL
         self.balance = balance
@@ -68,7 +68,6 @@ class EventInfinite(Event, threading.Thread):
         if self.do_buy(cur_price, buying_amount) != True:
             self.close(False)
             return None
-
         # self.update_progress(PER_BUY, self.buy_count)
         # to do -> asset update
         # self.ui_control.show_asset_info()

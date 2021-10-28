@@ -36,11 +36,10 @@ class Event():
         return self.status
 
     def update_info(self, price, avg_price, amount, profit_rate, count):
-        invest_asset = round(avg_price * amount, 2)
-        coin_info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
-               f'{profit_rate} %', f'{count}/{PER_BUY}']
-        print(self.ev_id, coin_info)
         if self.socket.conn_status:
+            invest_asset = round(avg_price * amount, 2)
+            coin_info = [f'{self.coin_name}', f'{price}원', f'{avg_price}원', f'{invest_asset}원', f'{round((invest_asset * profit_rate)/100, 2)}원',
+               f'{profit_rate} %', f'{count}/{PER_BUY}']
             info = {'command':'view_update', 'ev_id':self.ev_id}
             info.update({'info_list':coin_info})
             info = json.dumps(info)
