@@ -5,7 +5,6 @@ import logging
 import threading
 
 INTERVAL = 60 * TIME_OUT # minutes
-BUY_PERCENT = [1, 1.05] # AVG_PRICE, AVG_PRICE * 5%
 
 class EventInfinite(Event, threading.Thread):
     pass
@@ -34,6 +33,9 @@ class EventInfinite(Event, threading.Thread):
             threading.Thread(target=self.__trading, daemon=True),
             threading.Thread(target=self.__show_info, daemon=True),
         ]
+
+        self.sold_flag = False
+        self.sold_price = 0
 
     def do_buy(self, price, amount):
         try:
@@ -82,21 +84,28 @@ class EventInfinite(Event, threading.Thread):
         ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount)  # 매도
         return ret['uuid']
 
-    def order_buy(self, buying_asset, buying_price):
+    def order_buy(self, buying_asset):
         # order buy
         ret = False
-        cur_price = self.coin.get_current_price()
-        above_tick_price = get_above_tick_price(cur_price)
-        if cur_price <= buying_price:
-            buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
-            ret = self.do_buy(above_tick_price, buying_amount)
+        cur_price = self.coin.get_current_price()  # 현재 가격
+        above_tick_price = get_above_tick_price(cur_price)  # 현재 가격보다 1호가 위 (바로 매수하기 위해)
+        if self.buy_count > PER_BUY // 2:
+            BUY_PERCENT = [1, 1]  # AVG_PRICE, AVG_PRICE
+        else:
+            BUY_PERCENT = [1, 1.05]  # AVG_PRICE, AVG_PRICE * 5%
 
-        return ret
+        for percent in BUY_PERCENT:
+            if cur_price <= (self.avg_price * percent):
+                buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
+                ret = self.do_buy(above_tick_price, buying_amount)
+                logging.info(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
+            else:
+                logging.info(f'매수 진행 불가 : 현재가 : {cur_price} > 매수 조건가 : {self.avg_price * percent}')
 
     def __trading(self):
         buying_asset = self.init_trade()
         if buying_asset == None:
-            self.close_thread()
+            self.close(False)
             return
 
         while self.__running and self.buy_count < PER_BUY:
@@ -108,13 +117,9 @@ class EventInfinite(Event, threading.Thread):
                 self.close(True)
             else:
                 self.account.cancel_order(uuid)
-                for percent in BUY_PERCENT:
-                    ret = self.order_buy(buying_asset, self.avg_price*percent)
-                    logging.info(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
+                time.sleep(1)
+                self.order_buy(buying_asset)
 
-            # self.update_progress(PER_BUY, self.buy_count)
-            # to do -> asset update
-            # self.ui_control.show_asset_info()
             time.sleep(1)
 
         ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
@@ -122,6 +127,8 @@ class EventInfinite(Event, threading.Thread):
 
     def reset_list(self):
         cur_price = self.coin.get_current_price()
+        if self.sold_flag:
+            cur_price = self.sold_price
         self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
                          self.buy_count)
 
@@ -136,13 +143,14 @@ class EventInfinite(Event, threading.Thread):
         self.__running = False
         if sold_flag == False:
             self.repeat = False
-            cur_price = self.avg_price = self.buy_count = self.total_amount = 0
-            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
-                         self.buy_count)
+            self.sold_price = self.avg_price = self.buy_count = self.total_amount = 0
         elif sold_flag == True:
-            cur_price = self.coin.get_current_price()
-            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
-                             self.buy_count)
+            self.sold_flag = True
+            self.sold_price = self.coin.get_current_price()
+
+        self.update_info(self.sold_price, self.avg_price, self.total_amount,
+                         get_increase_rate(self.sold_price, self.avg_price),
+                         self.buy_count)
         # self.update_progress(PER_BUY, self.buy_count)
         with self.t_condition:
             self.t_condition.notifyAll()
@@ -156,6 +164,7 @@ class EventInfinite(Event, threading.Thread):
             return
         self.__running = True
         while True:
+            self.sold_flag = False
             logging.info(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
             for t in self.threads:
                 t.start()

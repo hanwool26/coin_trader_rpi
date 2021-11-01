@@ -36,8 +36,6 @@ class Manager:
         self.socket.send(signal)
 
     def process(self, data):
-        # todo
-        # -> json format : {command, coin_name, balance, interval, repeat}
         coin_info = dict()
         command = data['command']
         if command == 'do_start':
@@ -88,21 +86,18 @@ class Manager:
         self.socket.send(signal)
 
     def init_update(self):
+        self.set_max_row()
         for event in self.infinite_event:
             event.reset_list()
 
     def sort_event(self, id):
-        delete = self.infinite_event[id]
         size = len(self.infinite_event)
         for idx in range(id, size+1):
             if idx+1 < self.infinite_idx:
                 self.infinite_event[idx] = self.infinite_event[idx+1]
                 self.infinite_event[idx].ev_id = idx
-        del delete
         del self.infinite_event[size-1]
         self.infinite_idx -=1
-        self.set_max_row()
-        for idx in range(len(self.infinite_event)):
-            self.infinite_event[idx].reset_list()
-            
+        self.init_update()
+
 
