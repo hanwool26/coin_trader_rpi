@@ -45,6 +45,13 @@ class Event():
             info = json.dumps(info)
             self.socket.send(info)
 
+    def send_log(self, str):
+        logging.info(str)
+        if self.socket.conn_status:
+            log = {'command':'log', 'log':str}
+            log = json.dumps(log)
+            self.socket.send(log)
+
     def update_status(self, status):
         self.status = status
         pass

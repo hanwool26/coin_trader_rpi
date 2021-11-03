@@ -53,16 +53,16 @@ class EventInfinite(Event, threading.Thread):
                 time.sleep(1)
             return False
         except Exception as e:
-            logging.error(f"do buy : {ret['error']['message']}")
+            self.send_log(f"do buy : {ret['error']['message']}")
             self.buy_count += 1
             return False
 
     def init_trade(self):
         if self.balance <= 0:
-            logging.info('잔고 부족')
+            self.send_log('잔고 부족')
             return None
         each_asset = round(self.balance * self.RATIO_BUY, 2)
-        print(f'분할 매수액 : {each_asset}')
+        self.send_log(f'분할 매수액 : {each_asset}')
 
         cur_price = self.coin.get_current_price()
         self.avg_price = cur_price = get_above_tick_price(cur_price)  # 호가 위 매수
@@ -98,9 +98,9 @@ class EventInfinite(Event, threading.Thread):
             if cur_price <= (self.avg_price * percent):
                 buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                 ret = self.do_buy(above_tick_price, buying_amount)
-                logging.info(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
+                self.send_log(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
             else:
-                logging.info(f'매수 진행 불가 : 현재가 : {cur_price} > 매수 조건가 : {self.avg_price * percent}')
+                self.send_log(f'매수 진행 불가 : 현재가 : {cur_price} > 매수 조건가 : {self.avg_price * percent}')
 
     def __trading(self):
         buying_asset = self.init_trade()
@@ -113,7 +113,7 @@ class EventInfinite(Event, threading.Thread):
             # sleep for interval ( hour units )
             time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
-                logging.info('매도 성공')
+                self.send_log('매도 성공')
                 self.close(True)
             else:
                 self.account.cancel_order(uuid)
@@ -139,7 +139,7 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(0.5)
 
     def close(self, sold_flag):
-        logging.info('무한 매수 종료')
+        self.send_log('무한 매수 종료')
         self.__running = False
         if sold_flag == False:
             self.repeat = False
@@ -165,7 +165,7 @@ class EventInfinite(Event, threading.Thread):
         self.__running = True
         while True:
             self.sold_flag = False
-            logging.info(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
+            self.send_log(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
             for t in self.threads:
                 t.start()
 

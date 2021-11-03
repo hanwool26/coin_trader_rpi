@@ -24,7 +24,6 @@ class Socket_Server():
                 self.conn.sendall(data.encode())
             except Exception as e:
                 logging.error(f'send() : {e}')
-        pass
 
     def __recv(self):
         while self.conn_status:
