@@ -3,9 +3,6 @@ import logging
 import pyupbit
 from pyupbit.request_api import _call_public_api
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
-UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
-
 KRW = 'KRW'
 BTC = 'BTC'
 
