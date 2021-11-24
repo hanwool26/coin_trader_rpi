@@ -180,20 +180,63 @@ def get_RSI(coin, time_unit='weeks', unit=None):  # 1분 RSI 분석
     coin_to_price.update(temp_dict)  # 코인-시간-가격 매핑
     return round(rsi_calculate(price_list, rsi_number, len(price_list)),2)  # RSI 계산
 
-def get_sort_rsi():
-    coin_rsi = dict()
+
+
+def get_week_volume(coin):
+    url = "https://api.upbit.com/v1/candles/weeks"
+    headers = {"Accept": "application/json"}
+    ticket = from_name_to_ticker(coin)
+    querystring = {"market": ticket, "count": str(1)}
+    response = requests.request("GET", url, params=querystring)
+    r_str = response.text
+    r_str = r_str.lstrip('[')  # 첫 문자 제거
+    r_str = r_str.rstrip(']')  # 마지막 문 제거
+    r_list = r_str.split("}")  # str를 }기준으로 쪼개어 리스트로 변환
+    for j in range(len(r_list) - 1):
+        r_list[j] += "}"
+        if j != 0:
+            r_list[j] = r_list[j].lstrip(',')
+        r_dict = literal_eval(r_list[j])  # stinrg to dict
+        volume = r_dict["candle_acc_trade_volume"]
+
+    return float(volume)
+
+get_week_volume('샌드박스')
+
+
+def get_sort_index(type='rsi'):
+    index = dict()
     print('rsi calculating...')
     for coin in get_coin_list():
-        rsi = get_RSI(coin)
-        if rsi < 20: # excluding abnormal rsi value of coin.
-            continue
-        coin_rsi.update({coin: rsi})
-    res = sorted(coin_rsi.items(), key=(lambda x:x[1]), reverse=False)
+        if type == 'rsi':
+            rsi = get_RSI(coin)
+            if rsi < 20: # excluding abnormal rsi value of coin.
+                continue
+            index.update({coin: rsi})
+        elif type == 'volume':
+            volume = get_week_volume(coin)
+            index.update({coin: volume})
 
+    res = sorted(index.items(), key=(lambda x: x[1]), reverse=False)
+    return res
+
+def get_sort_rsi_by_vol(num=20):
+    print('calculating...')
+    volume_dict = dict()
+    rsi_dict = dict()
+    for coin in get_coin_list():
+        volume = get_week_volume(coin)
+        volume_dict.update({coin: volume})
+
+    sort_by_vol = sorted(volume_dict.items(), key=(lambda x: x[1]), reverse=True)[:num]
+    print(sort_by_vol)
+
+    for coin in sort_by_vol:
+        rsi = get_RSI(coin[0])
+        rsi_dict.update({coin[0]: rsi})
+
+    res = sorted(rsi_dict.items(), key=(lambda x:x[1]), reverse=False)
     print('finish')
     return res
 
-print(get_sort_rsi())
-
-
-
+print(get_sort_rsi_by_vol())

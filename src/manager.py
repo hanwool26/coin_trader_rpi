@@ -1,5 +1,6 @@
 from src.event_couple import *
 from src.event_infinite import *
+from src.autotrade import *
 from src.account import *
 import logging
 from src import log
@@ -13,6 +14,7 @@ class Manager:
         self.infinite_event = list()
         self.infinite_idx = 0
         self.socket = socket
+        self.auto_trade = None
 
         # if couple_list is not None:
         #    self.init_eventcouple(couple_list)
@@ -58,6 +60,9 @@ class Manager:
             self.update_asset()
         elif command == 'request_asset':
             self.update_asset()
+        elif command == 'auto_trade':
+            trade_num = data['trade_num'] # getting the number of trading coin.
+            self.auto_trade = AutoTrade(self, trade_num)
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
         if trade == 'couple':
