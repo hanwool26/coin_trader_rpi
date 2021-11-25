@@ -61,6 +61,7 @@ class Manager:
                 self.auto_trade.close()
                 del self.auto_trade
                 self.auto_trade = None
+                logging.info('auto trade is deleted')
             else:
                 logging.info('auto trade is None')
 

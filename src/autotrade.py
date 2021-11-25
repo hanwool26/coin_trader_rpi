@@ -13,12 +13,14 @@ class AutoTrade(threading.Thread):
         self.__running = False
         self.manager = manager
         self.trade = 'infinite'
-        pass
+        self.threads = [
+            threading.Thread(target=self.__auto_trading, daemon=True),
+        ]
 
     def check_running(self):
         closing = 0
         delete_idx = list()
-        if self.infinite_event == None:
+        if self.manager.infinite_event == 0:
             return closing
 
         for idx in range(self.manager.infinite_idx):
@@ -63,18 +65,21 @@ class AutoTrade(threading.Thread):
 
     def close(self):
         self.__running = False
-        for idx in range(self.manager.infinite_idx, 0, -1):
+        for idx in range(self.manager.infinite_idx-1, -1, -1):
             self.manager.do_stop(idx, self.trade)
 
-    def start(self):
-        self.__running = True
+    def __auto_trading(self):
         while self.__running:
             self.running_coin = self.check_running()
             need_coin = self.trade_num - self.running_coin
             logging.info(f'매수 필요한 코인 수 : {need_coin}')
-            if need_coin == 0: # init
-                continue
-            elif need_coin > 0:
+
+            if need_coin > 0:
                 self.buy_coin(need_coin)
 
             time.sleep(HOUR)
+
+    def run(self) -> None:
+        self.__running = True
+        for t in self.threads:
+            t.start()
