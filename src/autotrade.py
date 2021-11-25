@@ -19,20 +19,18 @@ class AutoTrade(threading.Thread):
         ]
 
     def check_running(self):
-        closing = 0
         delete_idx = list()
-        if self.manager.infinite_idx == 0:
-            return closing
 
         for idx in range(self.manager.infinite_idx):
             if self.manager.infinite_event[idx].running == False:
                 delete_idx.append(idx)
-                closing += 1
 
-        delete_idx.reverse()
-        self.manager.do_stop(delete_idx, self.trade)
 
-        return self.trade_num - closing
+        if delete_idx != None:
+            delete_idx.reverse()
+            self.manager.do_stop(delete_idx, self.trade)
+
+        return self.manager.infinite_idx
 
     def buy_coin(self, buying_coin_num):
         invest_asset = self.manager.account.get_balance() * 0.95 # reason that multiply 0.95 is to make enough space of investing asset.
