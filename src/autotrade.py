@@ -8,6 +8,7 @@ HOUR = 60*60
 
 class AutoTrade(threading.Thread):
     def __init__(self, manager, trade_num):
+        threading.Thread.__init__(self)
         self.trade_num = trade_num
         self.running_coin = 0
         self.__running = False

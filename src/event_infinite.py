@@ -7,7 +7,6 @@ import threading
 INTERVAL = 60 * TIME_OUT # minutes
 
 class EventInfinite(Event, threading.Thread):
-    pass
     def __init__(self, idx, account, socket, coin_name, balance, interval):
         threading.Thread.__init__(self)
         self.ev_id = idx
