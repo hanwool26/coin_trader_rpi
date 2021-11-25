@@ -28,7 +28,7 @@ class AutoTrade(threading.Thread):
             if self.manager.infinite_event[idx].__running == False:
                 delete_idx.append(idx)
                 closing += 1
-            
+
         self.manager.do_stop(delete_idx.reverse(), self.trade)
 
         return self.trade_num - closing

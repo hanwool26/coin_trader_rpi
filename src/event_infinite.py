@@ -26,7 +26,7 @@ class EventInfinite(Event, threading.Thread):
 
         self.t_condition = threading.Condition()
 
-        self.__running = False
+        self.running = False
         self.threads = [
             threading.Thread(target=self.__trading, daemon=True),
             threading.Thread(target=self.__show_info, daemon=True),
@@ -106,7 +106,7 @@ class EventInfinite(Event, threading.Thread):
             self.close(False)
             return
 
-        while self.__running and self.buy_count < PER_BUY:
+        while self.running and self.buy_count < PER_BUY:
             uuid = self.order_sell()
             # sleep for interval ( hour units )
             time.sleep(self.interval)
@@ -131,14 +131,14 @@ class EventInfinite(Event, threading.Thread):
                          self.buy_count)
 
     def __show_info(self):
-        while self.__running:
+        while self.running:
             cur_price = self.coin.get_current_price()
             self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price), self.buy_count)
             time.sleep(0.5)
 
     def close(self, sold_flag):
         self.send_log('무한 매수 종료')
-        self.__running = False
+        self.running = False
         if sold_flag == False:
             self.sold_price = self.avg_price = self.buy_count = self.total_amount = 0
         elif sold_flag == True:
@@ -158,7 +158,7 @@ class EventInfinite(Event, threading.Thread):
     def run(self):
         if self.interval == None:
             return
-        self.__running = True
+        self.running = True
         self.sold_flag = False
         self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
         for t in self.threads:
