@@ -29,7 +29,8 @@ class AutoTrade(threading.Thread):
                 delete_idx.append(idx)
                 closing += 1
 
-        self.manager.do_stop(delete_idx.reverse(), self.trade)
+        delete_idx.reverse()
+        self.manager.do_stop(delete_idx, self.trade)
 
         return self.trade_num - closing
 
