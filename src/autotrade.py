@@ -31,7 +31,6 @@ class AutoTrade(threading.Thread):
 
         for idx in reversed(delete_idx):
             self.manager.do_stop(idx, self.trade)
-            time.sleep(3)
 
         return self.trade_num - closing
 
@@ -58,7 +57,7 @@ class AutoTrade(threading.Thread):
                 logging.info(f'buy coin : {coin_name}')
                 coin_info.update({'coin_name': coin_name})
                 self.manager.do_start(None, self.trade, coin_info)
-                time.sleep(5)
+                time.sleep(1)
 
             idx += 1
             if self.trade_num == self.manager.infinite_idx:

@@ -88,6 +88,7 @@ class Manager:
                 if idx < self.infinite_idx:
                     self.infinite_event[idx].close(False)
                     self.sort_event(idx)
+                time.sleep(1)
 
     def set_max_row(self):
         signal = {'command':'set_max_row', 'row':self.infinite_idx}
