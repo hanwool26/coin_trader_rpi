@@ -49,12 +49,15 @@ class AutoTrade(threading.Thread):
         while True:
             flag = True
             coin_name = coin_list[idx][0]
+            coin_RSI = coin_list[idx][1]
+            if coin_RSI > 60:
+                break
             for event in self.manager.infinite_event:
                 if coin_name == event.coin_name:
                     flag = False
                     break
             if flag == True:
-                logging.info(f'buy coin : {coin_name}')
+                logging.info(f'buy coin : {coin_name}, RSI : {coin_RSI}')
                 coin_info.update({'coin_name': coin_name})
                 self.manager.do_start(None, self.trade, coin_info)
                 time.sleep(1)
