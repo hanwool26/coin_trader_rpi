@@ -21,7 +21,7 @@ class AutoTrade(threading.Thread):
     def check_running(self):
         closing = 0
         delete_idx = list()
-        if self.manager.infinite_event == 0:
+        if self.manager.infinite_idx == 0:
             return closing
 
         for idx in range(self.manager.infinite_idx):
