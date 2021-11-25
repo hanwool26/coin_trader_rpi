@@ -5,6 +5,7 @@ from src.manager import *
 from src.util import *
 
 HOUR = 60*60
+RSI_STD = 60 # RSI Standard
 
 class AutoTrade(threading.Thread):
     def __init__(self, manager, trade_num):
@@ -48,7 +49,8 @@ class AutoTrade(threading.Thread):
             flag = True
             coin_name = coin_list[idx][0]
             coin_RSI = coin_list[idx][1]
-            if coin_RSI > 60:
+            if coin_RSI > RSI_STD:
+                logging.info(f'RSI is over the RSI Standard({RSI_STD})')
                 break
             for event in self.manager.infinite_event:
                 if coin_name == event.coin_name:
