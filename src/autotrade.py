@@ -55,6 +55,7 @@ class AutoTrade(threading.Thread):
                 logging.info(f'buy coin : {coin_name}')
                 coin_info.update({'coin_name': coin_name})
                 self.manager.do_start(None, self.trade, coin_info)
+                time.sleep(5)
 
             idx += 1
             if self.trade_num == self.manager.infinite_idx:

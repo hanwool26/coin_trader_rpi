@@ -238,5 +238,3 @@ def get_sort_rsi_by_vol(num=20):
     res = sorted(rsi_dict.items(), key=(lambda x:x[1]), reverse=False)
     print('finish')
     return res
-
-print(get_sort_rsi_by_vol())
