@@ -28,9 +28,8 @@ class AutoTrade(threading.Thread):
             if self.manager.infinite_event[idx].__running == False:
                 delete_idx.append(idx)
                 closing += 1
-
-        for idx in reversed(delete_idx):
-            self.manager.do_stop(idx, self.trade)
+            
+        self.manager.do_stop(delete_idx.reverse(), self.trade)
 
         return self.trade_num - closing
 
@@ -65,8 +64,8 @@ class AutoTrade(threading.Thread):
 
     def close(self):
         self.__running = False
-        for idx in range(self.manager.infinite_idx-1, -1, -1):
-            self.manager.do_stop(idx, self.trade)
+        idx_list = [idx for idx in range(self.manager.infinite_idx - 1, -1, -1)]
+        self.manager.do_stop(idx_list, self.trade)
 
     def __auto_trading(self):
         while self.__running:
