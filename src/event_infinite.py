@@ -8,7 +8,7 @@ INTERVAL = 60 * TIME_OUT # minutes
 
 class EventInfinite(Event, threading.Thread):
     pass
-    def __init__(self, idx, account, socket, coin_name, balance, interval, repeat):
+    def __init__(self, idx, account, socket, coin_name, balance, interval):
         threading.Thread.__init__(self)
         self.ev_id = idx
         self.account = account
@@ -27,7 +27,6 @@ class EventInfinite(Event, threading.Thread):
 
         self.t_condition = threading.Condition()
 
-        self.repeat = repeat
         self.__running = False
         self.threads = [
             threading.Thread(target=self.__trading, daemon=True),
@@ -142,7 +141,6 @@ class EventInfinite(Event, threading.Thread):
         self.send_log('무한 매수 종료')
         self.__running = False
         if sold_flag == False:
-            self.repeat = False
             self.sold_price = self.avg_price = self.buy_count = self.total_amount = 0
         elif sold_flag == True:
             self.sold_flag = True
@@ -156,25 +154,19 @@ class EventInfinite(Event, threading.Thread):
             self.t_condition.notifyAll()
 
     def close_thread(self):
-        self.repeat = False
         self.close(False)
 
     def run(self):
         if self.interval == None:
             return
         self.__running = True
-        while True:
-            self.sold_flag = False
-            self.send_log(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
-            for t in self.threads:
-                t.start()
+        self.sold_flag = False
+        self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
+        for t in self.threads:
+            t.start()
 
-            with self.t_condition:
-                self.t_condition.wait()
-
-            if self.repeat == False:
-                break
-            time.sleep(1)
+        with self.t_condition:
+            self.t_condition.wait()
 
         print('exit main thread of infinite trade')
 

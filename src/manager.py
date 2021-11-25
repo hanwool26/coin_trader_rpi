@@ -16,14 +16,6 @@ class Manager:
         self.socket = socket
         self.auto_trade = None
 
-        # if couple_list is not None:
-        #    self.init_eventcouple(couple_list)
-    '''
-    def init_eventcouple(self, couple_list):
-        for idx, couple_coin in enumerate(couple_list):
-            primary, chain, cohesion = couple_coin[0], couple_coin[1], couple_coin[2]
-            self.couple_event.insert(idx, EventCouple(idx, self.account, self.main_window, primary, chain, cohesion))
-    '''
     def get_account(self, access_key, secret_key):
         if self.account == None:
             self.account = Account(access_key, secret_key)
@@ -46,7 +38,6 @@ class Manager:
             coin_info['coin_name'] = data['coin_name']
             coin_info['balance'] = data['balance']
             coin_info['interval'] = data['interval']
-            coin_info['repeat'] = data['repeat']
             self.do_start(selected_id, trade, coin_info)
         elif command == 'do_stop':
             trade = data['trade']
@@ -60,9 +51,18 @@ class Manager:
             self.update_asset()
         elif command == 'request_asset':
             self.update_asset()
-        elif command == 'auto_trade':
+        elif command == 'auto_trade_start':
             trade_num = data['trade_num'] # getting the number of trading coin.
-            self.auto_trade = AutoTrade(self, trade_num)
+            if self.auto_trade == None:
+                self.auto_trade = AutoTrade(self, trade_num)
+                self.auto_trade.start()
+        elif command == 'auto_trade_stop':
+            if self.auto_trade != None:
+                self.auto_trade.close()
+                del self.auto_trade
+                self.auto_trade = None
+            else:
+                logging.info('auto trade is None')
 
     def do_start(self, selected_id: list, trade, coin_info :dict):  # trade : method for algorithm ( ex> couple, infinite )
         if trade == 'couple':
@@ -72,7 +72,7 @@ class Manager:
             # to do -> take variables which is needed to make class from json format.
             if coin_info['interval'] != 0:
                 self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, self.socket, coin_info['coin_name'],
-                                                                        coin_info['balance'], coin_info['interval'], coin_info['repeat']))
+                                                                        coin_info['balance'], coin_info['interval']))
                 self.infinite_event[self.infinite_idx].start()
                 self.infinite_idx += 1
             else:
