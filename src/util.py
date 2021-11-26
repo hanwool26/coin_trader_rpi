@@ -221,7 +221,7 @@ def get_sort_index(type='rsi'):
     return res
 
 def get_sort_rsi_by_vol(num=20):
-    print('calculating...')
+    logging.info('calculating...')
     volume_dict = dict()
     rsi_dict = dict()
     for coin in get_coin_list():
@@ -236,5 +236,5 @@ def get_sort_rsi_by_vol(num=20):
         rsi_dict.update({coin[0]: rsi})
 
     res = sorted(rsi_dict.items(), key=(lambda x:x[1]), reverse=False)
-    print('finish')
+    logging.info('finish')
     return res
