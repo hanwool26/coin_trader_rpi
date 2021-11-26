@@ -82,6 +82,9 @@ class AutoTrade(threading.Thread):
 
             time.sleep(HOUR)
 
+        if self.check_running() == 0:
+            logging.info(f'auto trading exit')
+
     def run(self) -> None:
         self.__running = True
         for t in self.threads:

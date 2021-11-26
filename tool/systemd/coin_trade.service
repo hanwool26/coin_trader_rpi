@@ -1,0 +1,8 @@
+[Unit]
+Description=COIN TRADE service.
+
+[Service]
+ExecStart=/bin/bash /usr/bin/coin_trade.sh
+
+[Install]
+WantedBy=multi-user.target
