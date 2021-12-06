@@ -180,10 +180,9 @@ def get_RSI(coin, time_unit='weeks', unit=None):  # 1분 RSI 분석
     coin_to_price.update(temp_dict)  # 코인-시간-가격 매핑
     return round(rsi_calculate(price_list, rsi_number, len(price_list)),2)  # RSI 계산
 
-
-
 def get_week_volume(coin):
     url = "https://api.upbit.com/v1/candles/weeks"
+    volume = 0
     headers = {"Accept": "application/json"}
     ticket = from_name_to_ticker(coin)
     querystring = {"market": ticket, "count": str(1)}
@@ -200,9 +199,6 @@ def get_week_volume(coin):
         volume = r_dict["candle_acc_trade_volume"]
 
     return float(volume)
-
-get_week_volume('샌드박스')
-
 
 def get_sort_index(type='rsi'):
     index = dict()
@@ -238,3 +234,4 @@ def get_sort_rsi_by_vol(num=20):
     res = sorted(rsi_dict.items(), key=(lambda x:x[1]), reverse=False)
     logging.info('finish')
     return res
+

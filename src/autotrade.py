@@ -26,7 +26,6 @@ class AutoTrade(threading.Thread):
             if self.manager.infinite_event[idx].running == False:
                 delete_idx.append(idx)
 
-
         if delete_idx != None:
             delete_idx.reverse()
             self.manager.do_stop(delete_idx, self.trade)
@@ -34,7 +33,7 @@ class AutoTrade(threading.Thread):
         return self.manager.infinite_idx
 
     def buy_coin(self, buying_coin_num):
-        invest_asset = self.manager.account.get_balance() * 0.95 # reason that multiply 0.95 is to make enough space of investing asset.
+        invest_asset = self.manager.account.get_balance() * 0.98 # reason that multiply 0.95 is to make enough space of investing asset.
         each_asset = round( (invest_asset / buying_coin_num), 2)
         logging.info(f'buy coin - total asset : {invest_asset}, each_asset : {each_asset}, coin_number : {buying_coin_num}')
         coin_list = get_sort_rsi_by_vol()
@@ -79,7 +78,6 @@ class AutoTrade(threading.Thread):
 
             if need_coin > 0:
                 self.buy_coin(need_coin)
-
             time.sleep(HOUR)
 
         if self.check_running() == 0:
