@@ -6,6 +6,7 @@ from src.util import *
 
 HOUR = 60*60
 RSI_STD = 60 # RSI Standard
+TRADE_INTERVAL = 24
 
 class AutoTrade(threading.Thread):
     def __init__(self, manager, trade_num):
@@ -40,7 +41,7 @@ class AutoTrade(threading.Thread):
         idx = 0
         coin_info = {
             'balance': each_asset,
-            'interval': 12,
+            'interval': TRADE_INTERVAL,
             'repeat': False,
         }
 
