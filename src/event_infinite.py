@@ -112,6 +112,7 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
                 self.send_log('매도 성공')
+                # save report
                 self.close(True)
             else:
                 self.account.cancel_order(uuid)
@@ -120,7 +121,12 @@ class EventInfinite(Event, threading.Thread):
 
             time.sleep(1)
 
-        ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
+        uuid = self.do_sell(self.coin.ticker, price_round(self.avg_price), self.total_amount) # 평단 본절
+        while True: # 본절가에서 영혼법 지속.
+            if self.account.order_status(uuid) == 'done':
+                break
+            time.sleep(self.interval)
+
         self.close(True)
 
     def reset_list(self):
