@@ -1,12 +1,10 @@
 import os
 import datetime
-# from src.event import PER_BUY
-PER_BUY = 40
+from src.event import PER_BUY
 Today = datetime.date.today()
 Now = datetime.datetime.now()
 
-OUTPUT_DIR = '/usr/share/coin_trader/output/'
-OUTPUT_DIR = os.path.dirname(os.path.realpath(__file__))
+OUTPUT_DIR = '/usr/share/coin_trade/output/'
 
 class Report():
     def __init__(self):
@@ -21,7 +19,7 @@ class Report():
     def make_report_str(self, name, sold_price, avg_price, amount, invest_rate, buy_count):
         profit = (sold_price - avg_price) * amount
         progress = (buy_count / PER_BUY) * 100
-        report_str = '%s / %s /평단가 : %s원 / 매도가 : %s원 / 이익율 : %s%% / 손익 : %s원  / 진행률 : %s%%' % (
+        report_str = '%s / %s / 평단가 : %s원 / 매도가 : %s원 / 이익율 : %s%% / 손익 : %s원  / 진행률 : %s%%\n' % (
             Now, name, avg_price, sold_price, invest_rate, profit, progress)
         return report_str
 
@@ -30,6 +28,3 @@ class Report():
         report_str = self.make_report_str(name,sold_price,avg_price,amount,invest_rate,buy_count)
         with open(file_path, "a") as f:
             f.write(report_str)
-
-r = Report()
-r.save_report('도지', 300, 200, 100, 10, 10)
