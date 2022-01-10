@@ -2,6 +2,7 @@ from src.event_couple import *
 from src.event_infinite import *
 from src.autotrade import *
 from src.account import *
+from src.report import Report
 import logging
 from src import log
 
@@ -15,6 +16,7 @@ class Manager:
         self.infinite_idx = 0
         self.socket = socket
         self.auto_trade = None
+        self.report = Report()
 
     def get_account(self, access_key, secret_key):
         if self.account == None:
@@ -72,7 +74,7 @@ class Manager:
         elif trade == 'infinite':
             # to do -> take variables which is needed to make class from json format.
             if coin_info['interval'] != 0:
-                self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, self.socket, coin_info['coin_name'],
+                self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, self.socket, self.report, coin_info['coin_name'],
                                                                         coin_info['balance'], coin_info['interval']))
                 self.infinite_event[self.infinite_idx].start()
                 self.infinite_idx += 1

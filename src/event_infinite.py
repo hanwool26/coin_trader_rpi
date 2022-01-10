@@ -7,12 +7,13 @@ import threading
 INTERVAL = 60 * TIME_OUT # minutes
 
 class EventInfinite(Event, threading.Thread):
-    def __init__(self, idx, account, socket, coin_name, balance, interval):
+    def __init__(self, idx, account, socket, report, coin_name, balance, interval):
         threading.Thread.__init__(self)
         self.ev_id = idx
         self.account = account
         self.socket = socket
         # self.ui_control = main_window
+        self.report = report
         self.coin_name = coin_name
 
         self.coin = Coin(self.coin_name)
@@ -150,11 +151,8 @@ class EventInfinite(Event, threading.Thread):
         elif sold_flag == True:
             self.sold_flag = True
             self.sold_price = self.coin.get_current_price()
-
-        self.update_info(self.sold_price, self.avg_price, self.total_amount,
-                         get_increase_rate(self.sold_price, self.avg_price),
-                         self.buy_count)
-        # self.update_progress(PER_BUY, self.buy_count)
+            self.report.save_report(self.coin_name, self.sold_price, self.avg_price,
+                                    self.total_amount, get_increase_rate(self.sold_price, self.avg_price), self.buy_count)
         with self.t_condition:
             self.t_condition.notifyAll()
 
