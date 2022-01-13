@@ -1,5 +1,6 @@
 import os
 import datetime
+import logging
 from src.event import PER_BUY
 Today = datetime.date.today()
 Now = datetime.datetime.now()
@@ -8,7 +9,6 @@ OUTPUT_DIR = '/usr/share/coin_trade/output/'
 
 class Report():
     def __init__(self):
-        print('Init Report()')
         file_url = OUTPUT_DIR
 
     def make_file_path(self) -> str:
@@ -26,5 +26,6 @@ class Report():
     def save_report(self, name, sold_price, avg_price, amount, invest_rate, buy_count):
         file_path = self.make_file_path()
         report_str = self.make_report_str(name,sold_price,avg_price,amount,invest_rate,buy_count)
+        logging.info(report_str)
         with open(file_path, "a") as f:
             f.write(report_str)
