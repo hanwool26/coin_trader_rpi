@@ -31,9 +31,9 @@ class Account():
         else :
             ret = self.upbit.buy_limit_order(ticker, price, amount)
             if ret != None:
-                logging.info(f'success to buy {amount} of {ticker} at {price}')
+                logging.info(f'success to buy {ticker}, price : {price}, amount : {amount}')
             else:
-                logging .info(f'failed to buy {ticker}')
+                logging .info(f'failed to buy {ticker}, price : {price}, amount : {amount}')
         return ret
 
     def sell(self, ticker, price, amount):
