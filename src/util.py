@@ -51,10 +51,10 @@ def get_tick_unit(price):
         return 1000
 
 def get_above_tick_price(price):
-    return price + get_tick_unit(price)
+    return round((price + get_tick_unit(price)),2)
 
 def get_below_tick_price(price):
-    return price - get_tick_unit(price)
+    return round((price - get_tick_unit(price)),2)
 
 def get_avg_price(avg_price, price, count):
     avg_price = ((avg_price * (count-1) + price)) / count
