@@ -20,7 +20,7 @@ class Report():
         profit = (sold_price - avg_price) * amount
         progress = (buy_count / PER_BUY) * 100
         report_str = '%s / %s / 평단가 : %s원 / 매도가 : %s원 / 이익율 : %s%% / 손익 : %s원  / 진행률 : %s%%\n' % (
-            self.Now, name, avg_price, sold_price, invest_rate, profit, progress)
+            self.Now, name, avg_price, sold_price, invest_rate, round(profit, 2), progress)
         return report_str
 
     def save_report(self, name, sold_price, avg_price, amount, invest_rate, buy_count):
