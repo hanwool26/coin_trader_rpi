@@ -222,6 +222,9 @@ def get_sort_rsi_by_vol(num=20):
     volume_dict = dict()
     rsi_dict = dict()
     for coin in get_coin_list():
+        ticker = from_name_to_ticker(coin)
+        if pyupbit.get_current_price(ticker) < 0.01:
+            continue
         volume = get_week_volume(coin)
         volume_dict.update({coin: volume})
 
