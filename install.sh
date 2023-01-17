@@ -18,6 +18,7 @@ fi
 
 echo "copy scripts..."
 systemctl stop coin_trade.service
+rm -rf /usr/local/bin/coin_trade_service
 cp -r ../coin_trader_rpi /usr/local/bin/coin_trade_service
 cp tool/systemd/coin_trade.sh /usr/bin/
 cp tool/systemd/coin_trade.service /lib/systemd/system/coin_trade.service

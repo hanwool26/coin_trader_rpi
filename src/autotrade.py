@@ -9,13 +9,14 @@ RSI_STD = 60 # RSI Standard
 TRADE_INTERVAL = 24
 
 class AutoTrade(threading.Thread):
-    def __init__(self, manager, trade_num):
+    def __init__(self, manager, trade_num, interval):
         threading.Thread.__init__(self)
         self.trade_num = trade_num
         self.running_coin = 0
         self.__running = False
         self.manager = manager
         self.trade = 'infinite'
+        self.interval = interval
         self.threads = [
             threading.Thread(target=self.__auto_trading, daemon=True),
         ]
@@ -41,7 +42,7 @@ class AutoTrade(threading.Thread):
         idx = 0
         coin_info = {
             'balance': each_asset,
-            'interval': TRADE_INTERVAL,
+            'interval': self.interval,
             'repeat': False,
         }
 
