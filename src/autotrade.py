@@ -5,7 +5,8 @@ from src.manager import *
 from src.util import *
 
 HOUR = 60*60
-RSI_STD = 60 # RSI Standard
+RSI_UPSTD = 60 # RSI Standard
+RSI_DOWNSTD = 20
 TRADE_INTERVAL = 24
 
 class AutoTrade(threading.Thread):
@@ -50,13 +51,14 @@ class AutoTrade(threading.Thread):
             flag = True
             coin_name = coin_list[idx][0]
             coin_RSI = coin_list[idx][1]
-            if coin_RSI > RSI_STD:
-                logging.info(f'RSI is over the RSI Standard({RSI_STD})')
-                break
-            for event in self.manager.infinite_event:
-                if coin_name == event.coin_name:
-                    flag = False
-                    break
+            if coin_RSI > RSI_UPSTD or coin_RSI < RSI_DOWNSTD:
+                logging.info(f'{coin_name} has invalid RSI : {coin_RSI}')
+                flag = False
+            else :
+                for event in self.manager.infinite_event:
+                    if coin_name == event.coin_name:
+                        flag = False
+                        break
             if flag == True:
                 logging.info(f'buy coin : {coin_name}, RSI : {coin_RSI}')
                 coin_info.update({'coin_name': coin_name})

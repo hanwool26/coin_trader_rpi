@@ -7,3 +7,5 @@ build/
 data/config.ini
 main.spec
 __pycache__/
+run.sh
+tags
