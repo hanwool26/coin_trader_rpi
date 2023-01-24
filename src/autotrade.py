@@ -51,7 +51,10 @@ class AutoTrade(threading.Thread):
             flag = True
             coin_name = coin_list[idx][0]
             coin_RSI = coin_list[idx][1]
-            if coin_RSI > RSI_UPSTD or coin_RSI < RSI_DOWNSTD:
+            if get_price_by_name(coin_name) < 1:
+                logging.info(f'{coin_name} is low price for trade -> skip')
+                flag = False
+            elif coin_RSI > RSI_UPSTD or coin_RSI < RSI_DOWNSTD:
                 logging.info(f'{coin_name} has invalid RSI : {coin_RSI}')
                 flag = False
             else :

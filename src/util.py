@@ -31,7 +31,9 @@ def get_buying_amount(balance, price, coherence):
     return round(amount,2)
 
 def get_tick_unit(price):
-    if price < 10:
+    if price < 1:
+        return 0.001
+    elif price < 10:
         return 0.01
     elif price < 100:
         return 0.1
