@@ -5,6 +5,7 @@ from src.manager import *
 from src.util import *
 
 HOUR = 60*60
+MINUTE = 60
 RSI_UPSTD = 60 # RSI Standard
 RSI_DOWNSTD = 20
 TRADE_INTERVAL = 24
@@ -81,11 +82,11 @@ class AutoTrade(threading.Thread):
         while self.__running:
             self.running_coin = self.check_running()
             need_coin = self.trade_num - self.running_coin
-            logging.info(f'매수 필요한 코인 수 : {need_coin}')
+            # logging.info(f'매수 필요한 코인 수 : {need_coin}')
 
             if need_coin > 0:
                 self.buy_coin(need_coin)
-            time.sleep(HOUR)
+            time.sleep(MINUTE)
 
         if self.check_running() == 0:
             logging.info(f'auto trading exit')

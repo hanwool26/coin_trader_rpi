@@ -129,15 +129,14 @@ class EventInfinite(Event, threading.Thread):
                 time.sleep(1)
                 self.order_buy(buying_asset)
 
-            time.sleep(1)
-
-        uuid = self.do_sell(self.coin.ticker, price_round(self.avg_price), self.total_amount) # 평단 본절
-        while True: # 본절가에서 영혼법 지속.
-            if self.account.order_status(uuid) == 'done':
-                break
-            time.sleep(self.interval)
-
-        self.close(True)
+        if self.buy_count >= PER_BUY:
+            logging.info(f'{self.coin_name} is going to endless selling')
+            uuid = self.do_sell(self.coin.ticker, price_round(self.avg_price), self.total_amount) # 평단 본절
+            while True: # 본절가에서 영혼법 지속.
+                if self.account.order_status(uuid) == 'done':
+                    self.close(True)
+                    break
+                time.sleep(1)
 
     def reset_list(self):
         cur_price = self.coin.get_current_price()
