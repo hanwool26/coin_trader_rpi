@@ -109,11 +109,20 @@ class EventInfinite(Event, threading.Thread):
 
         while self.running and self.buy_count < PER_BUY:
             uuid = self.order_sell()
+            trade_interval = self.interval
+            sell_status = False
             # sleep for interval ( hour units )
-            time.sleep(self.interval)
-            if self.account.order_status(uuid) == 'done':
+
+            for sec in range(0, trade_interval):
+                if self.account.order_status(uuid) == 'done':
+                    sell_status = True
+                    break
+                else :
+                    time.sleep(1)
+
+            if sell_status == True :
                 self.send_log('매도 성공')
-                # save report
+                # save report in close() with flag True
                 self.close(True)
             else:
                 self.account.cancel_order(uuid)

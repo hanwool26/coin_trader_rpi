@@ -44,14 +44,19 @@ class Account():
         ret = self.upbit.cancel_order(uuid)
         return ret
 
-    def order_status(self, uuid):
-        return self.upbit.get_order(uuid)['state']
+    def order_status(self, uuid) -> str:
+        try:
+            ret = self.upbit.get_order(uuid)['state']
+            return ret
+        except Exception as e:
+            logging.error(e)
+            return None
 
     def connect_account(self):
         try:
             self.upbit = pyupbit.Upbit(self.access_key, self.secret_key)
         except Exception as e:
-            logging.log.info(e)
+            logging.log.error(e)
 
         if self.upbit != None:
             logging.info('Success to access my account')
