@@ -109,16 +109,15 @@ class EventInfinite(Event, threading.Thread):
 
         while self.running and self.buy_count < PER_BUY:
             uuid = self.order_sell()
-            trade_interval = self.interval
+            trade_interval = self.interval // 60
             sell_status = False
-            # sleep for interval ( hour units )
 
-            for sec in range(0, trade_interval):
+            for min in range(0, trade_interval): # check per a minutes
                 if self.account.order_status(uuid) == 'done':
                     sell_status = True
                     break
                 else :
-                    time.sleep(1)
+                    time.sleep(60)
 
             if sell_status == True :
                 self.send_log('매도 성공')
@@ -180,6 +179,3 @@ class EventInfinite(Event, threading.Thread):
             self.t_condition.wait()
 
         print('exit main thread of infinite trade')
-
-
-
