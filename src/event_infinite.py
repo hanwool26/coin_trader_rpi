@@ -4,7 +4,7 @@ from src.util import *
 import logging
 import threading
 
-INTERVAL = 60 * TIME_OUT # minutes
+HOUR = 60 * 60
 
 class EventInfinite(Event, threading.Thread):
     def __init__(self, idx, account, socket, report, coin_name, balance, interval):
@@ -19,7 +19,7 @@ class EventInfinite(Event, threading.Thread):
         self.coin = Coin(self.coin_name)
         self.RATIO_BUY = 1/(PER_BUY*2)
 
-        self.interval = interval * INTERVAL
+        self.interval = interval * HOUR
         self.balance = balance
         self.buy_count = 0
         self.avg_price = 0
@@ -35,6 +35,8 @@ class EventInfinite(Event, threading.Thread):
 
         self.sold_flag = False
         self.sold_price = 0
+        self.trade_flag = False
+        logging.info(f'{coin_name} : 무한 매수 event created!')
 
     def do_buy(self, price, amount):
         try:
@@ -101,6 +103,13 @@ class EventInfinite(Event, threading.Thread):
             else:
                 self.send_log(f'매수 진행 불가 : 현재가 : {cur_price} > 매수 조건가 : {self.avg_price * percent}')
 
+    def __check_sold_status(self, uuid):
+        while self.trade_flag :
+            if self.account.order_status(uuid) == 'done':
+                self.trade_flag = False
+                break
+            time.sleep(10) # check order_status per 10 seconds
+
     def __trading(self):
         buying_asset = self.init_trade()
         if buying_asset == None:
@@ -109,15 +118,22 @@ class EventInfinite(Event, threading.Thread):
 
         while self.running and self.buy_count < PER_BUY:
             uuid = self.order_sell()
-            trade_interval = self.interval // 60
+            # trade_interval = self.interval
             sell_status = False
+            self.trade_flag = True
 
-            for min in range(0, trade_interval): # check per a minutes
-                if self.account.order_status(uuid) == 'done':
+            sold_check_th = threading.Thread(target=self.__check_sold_status, daemon=True, args=(uuid, ))
+            sold_check_th.start()
+
+            for min in range(0, self.interval): # wait and check flag during trade_interval
+                if self.trade_flag == False:
                     sell_status = True
                     break
                 else :
-                    time.sleep(60)
+                    time.sleep(1)
+
+            self.trade_flag = False # kill the thread
+            sold_check_th.join() # wait for complete exit of thread
 
             if sell_status == True :
                 self.send_log('매도 성공')
@@ -135,7 +151,7 @@ class EventInfinite(Event, threading.Thread):
                 if self.account.order_status(uuid) == 'done':
                     self.close(True)
                     break
-                time.sleep(1)
+                time.sleep(HOUR)
 
     def reset_list(self):
         cur_price = self.coin.get_current_price()
@@ -171,7 +187,7 @@ class EventInfinite(Event, threading.Thread):
             return
         self.running = True
         self.sold_flag = False
-        self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval // INTERVAL} 시간, 투자금액 : {self.balance} 원')
+        self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval // HOUR} 시간, 투자금액 : {self.balance} 원')
         for t in self.threads:
             t.start()
 

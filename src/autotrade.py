@@ -11,7 +11,7 @@ RSI_DOWNSTD = 20
 TRADE_INTERVAL = 24
 
 class AutoTrade(threading.Thread):
-    def __init__(self, manager, trade_num, interval):
+    def __init__(self, manager, trade_num, interval, balance):
         threading.Thread.__init__(self)
         self.trade_num = trade_num
         self.running_coin = 0
@@ -19,6 +19,7 @@ class AutoTrade(threading.Thread):
         self.manager = manager
         self.trade = 'infinite'
         self.interval = interval
+        self.balance = float(balance)
         self.threads = [
             threading.Thread(target=self.__auto_trading, daemon=True),
         ]
@@ -37,7 +38,7 @@ class AutoTrade(threading.Thread):
         return self.manager.infinite_idx
 
     def buy_coin(self, buying_coin_num):
-        invest_asset = self.manager.account.get_balance() * 0.98 # reason that multiply 0.95 is to make enough space of investing asset.
+        invest_asset = self.balance * 0.98 #self.manager.account.get_balance() * 0.98 # reason that multiply 0.95 is to make enough space of investing asset.
         each_asset = round( (invest_asset / buying_coin_num), 2)
         logging.info(f'buy coin - total asset : {invest_asset}, each_asset : {each_asset}, coin_number : {buying_coin_num}')
         coin_list = get_sort_rsi_by_vol()

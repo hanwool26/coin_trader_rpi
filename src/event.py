@@ -27,7 +27,7 @@ class Event():
     def do_sell(self, ticker, price, amount):
         try:
             ret = self.account.sell(ticker, price, amount)
-            logging.info(f'do sell : {ticker}, {price}, {amount}')
+            logging.info(f'do sell : {ticker}, price : {price}, amount : {amount}')
         except Exception as e:
             logging.error(e)
         return ret

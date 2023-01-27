@@ -55,9 +55,10 @@ class Manager:
             self.update_asset()
         elif command == 'auto_trade_start':
             trade_num = data['trade_num'] # getting the number of trading coin.
+            balance = data['balance']
             interval = data['interval']
             if self.auto_trade == None:
-                self.auto_trade = AutoTrade(self, trade_num, interval)
+                self.auto_trade = AutoTrade(self, trade_num, interval, balance)
                 self.auto_trade.start()
         elif command == 'auto_trade_stop':
             if self.auto_trade != None:
@@ -112,5 +113,3 @@ class Manager:
         del self.infinite_event[size-1]
         self.infinite_idx -=1
         self.init_update()
-
-
