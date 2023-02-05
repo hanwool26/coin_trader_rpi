@@ -52,6 +52,7 @@ class EventInfinite(Event, threading.Thread):
                     self.avg_price = get_avg_price(self.avg_price, price, self.buy_count)
                     return True
                 time.sleep(1)
+            self.account.cancel_order(uuid)
             return False
         except Exception as e:
             self.send_log(f"do buy : {ret['error']['message']}")
@@ -78,10 +79,19 @@ class EventInfinite(Event, threading.Thread):
 
     def order_sell(self):
         # order sell
-        if self.buy_count > PER_BUY // 2:
-            selling_price = price_round(self.avg_price * 1.05)  # 평단가 5% 매도
+        # until progess / sell margin
+        #           25% /         10%
+        #           50% /          7%
+        #           75% /          5%
+        #          100% /          3%
+        if self.buy_count > ((PER_BUY // 4) * 3) :
+            selling_price = price_round(self.avg_price * 1.03) # sell margin 3%
+        elif self.buy_count > ((PER_BUY // 4) * 2) :
+            selling_price = price_round(self.avg_price * 1.05) # sell margin 5%
+        elif self.buy_count > ((PER_BUY // 4) * 1) :
+            selling_price = price_round(self.avg_price * 1.07) # sell margin 7%
         else:
-            selling_price = price_round(self.avg_price * 1.1)  # 평단가 10% 매도
+            selling_price = price_round(self.avg_price * 1.1)  # sell margin 10%
         ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount)  # 매도
         return ret['uuid']
 
@@ -125,7 +135,7 @@ class EventInfinite(Event, threading.Thread):
             sold_check_th = threading.Thread(target=self.__check_sold_status, daemon=True, args=(uuid, ))
             sold_check_th.start()
 
-            for min in range(0, self.interval): # wait and check flag during trade_interval
+            for sec in range(0, self.interval): # wait and check flag during trade_interval
                 if self.trade_flag == False:
                     sell_status = True
                     break
