@@ -31,6 +31,7 @@ def get_buying_amount(balance, price, coherence):
     return round(amount,2)
 
 def get_tick_unit(price):
+    #return pyupbit.get_tick_size(price, "floor")
     if price < 1:
         return 0.001
     elif price < 10:

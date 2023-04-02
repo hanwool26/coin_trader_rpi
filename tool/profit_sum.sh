@@ -6,7 +6,7 @@ total_sum=0.0
 
 function usage
 {
-    echo "[usage] ./profit_sum.sh -[option] -[file]"
+    echo "[usage] $(basename $0) -[option] -[file]"
     echo "[option]"
     echo "m - montly profit"
     echo "    ./profit_sum.sh -m /usr/share/coin_trade/output/report_xxxx-xx.txt"
@@ -14,9 +14,16 @@ function usage
     echo "    ./profit_sum.sh -a"
 }
 
+if [ -z $1 ] || [ $# -eq 0 ];
+then
+	usage
+	exit 0
+fi
+
 while getopts "m:a" opt; do
     case ${opt} in    
         m)
+			cat $OPTARG
             report_title=$(basename $OPTARG)
             echo "montly profit"
             echo "-------------------------"

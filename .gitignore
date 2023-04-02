@@ -3,9 +3,11 @@
 src/__pycache__/*
 dist/
 build/
+log/
 .idea/
 data/config.ini
 main.spec
+tool/output_monthly/
 __pycache__/
 run.sh
 tags
