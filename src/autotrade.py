@@ -46,7 +46,7 @@ class AutoTrade(threading.Thread):
         return total_asset
 
     def buy_coin(self, buying_coin_num):
-        invest_asset = (self.manager.account.get_balance() * 0.98) - self.get_total_running_asset() # reason that multiply 0.95 is to make enough space of investing asset.
+        invest_asset = (self.manager.account.get_asset() * 0.98) - self.get_total_running_asset() # reason that multiply 0.95 is to make enough space of investing asset.
         each_asset = round( (invest_asset / buying_coin_num), 2)
         logging.info(f'buy coin - total asset : {invest_asset}, each_asset : {each_asset}, coin_number : {buying_coin_num}')
         coin_list = get_sort_rsi_by_vol()
