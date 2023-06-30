@@ -5,6 +5,8 @@ import logging
 import threading
 
 HOUR = 60 * 60
+MONITORING_INTERVAL = 10 # 10 sec
+
 
 class EventInfinite(Event, threading.Thread):
     def __init__(self, idx, account, socket, report, coin_name, balance, interval):
@@ -19,7 +21,7 @@ class EventInfinite(Event, threading.Thread):
         self.coin = Coin(self.coin_name)
         self.RATIO_BUY = 1/(PER_BUY*2)
 
-        self.interval = interval * HOUR
+        self.interval = (interval * HOUR) // MONITORING_INTERVAL
         self.balance = balance
         self.buy_count = 0
         self.avg_price = 0
@@ -140,7 +142,7 @@ class EventInfinite(Event, threading.Thread):
                     sell_status = True
                     break
                 else :
-                    time.sleep(1)
+                    time.sleep(MONITORING_INTERVAL)
 
             self.trade_flag = False # kill the thread
             sold_check_th.join() # wait for complete exit of thread
@@ -197,7 +199,7 @@ class EventInfinite(Event, threading.Thread):
             return
         self.running = True
         self.sold_flag = False
-        self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval // HOUR} 시간, 투자금액 : {self.balance} 원')
+        self.send_log(f'무한 매수 시작 : {self.coin.name}, Interval : {(self.interval * MONITORING_INTERVAL)// HOUR} 시간, 투자금액 : {self.balance} 원')
         for t in self.threads:
             t.start()
 
