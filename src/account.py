@@ -8,20 +8,30 @@ class Account():
         self.upbit = None
 
     def get_asset(self) -> int:
-        asset = self.get_balance() + self.get_locked()
-        logging.info(f'asset : {asset} 원')
+        try:
+            asset = self.get_balance() + self.get_locked()
+            logging.info(f'asset : {asset} 원')
+        except Exception as e:
+            logging.info('account.get_asset()')
+            logging.error(e)
         return asset
 
     def get_balance(self) -> int:
-        my_info = self.upbit.get_balances()[0]
-        balance = (int(my_info['balance'].split('.')[0]))
-        logging.info(f"balance : {balance} 원")
+        try:
+            my_info = self.upbit.get_balances()[0]
+            balance = (int(my_info['balance'].split('.')[0]))
+            logging.info(f"balance : {balance} 원")
+        except Exception as e:
+            logging.error(e)
         return balance
 
     def get_locked(self) -> int:
-        my_info = self.upbit.get_balances()[0]
-        locked = (int(my_info['locked'].split('.')[0]))
-        logging.info(f'locked : {locked} 원')
+        try:
+            my_info = self.upbit.get_balances()[0]
+            locked = (int(my_info['locked'].split('.')[0]))
+            logging.info(f'locked : {locked} 원')
+        except Exception as e:
+            logging.error(e)
         return locked
 
     def buy(self, ticker, price, amount):

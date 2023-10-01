@@ -7,6 +7,14 @@ import threading
 HOUR = 60 * 60
 MONITORING_INTERVAL = 10 # 10 sec
 
+SELL_MARGIN = [1.01, 1.03, 1.04, 1.06] # 1% 3% 4% 6%
+TIME_INTERVAL_UNIT = 8 * HOUR
+MIN_TIME_INTERVAL = 8 * HOUR
+MAX_TIME_INTERVAL = 56 * HOUR
+
+
+# basis to judge rise or fall tendency
+BASIS_JUDGE_TENDENCY = 3
 
 class EventInfinite(Event, threading.Thread):
     def __init__(self, idx, account, socket, report, coin_name, balance, interval):
@@ -20,6 +28,10 @@ class EventInfinite(Event, threading.Thread):
 
         self.coin = Coin(self.coin_name)
         self.RATIO_BUY = 1/(PER_BUY*2)
+
+        # Dynamic interval changes
+        self.up_down_cnt = 0  # counter to check whether now is bull makret or bear market
+        self.check_cur_price = self.check_last_price = 0  # for comparing between prev price and current price during INTERVAL
 
         self.interval = (interval * HOUR) // MONITORING_INTERVAL
         self.balance = balance
@@ -68,7 +80,7 @@ class EventInfinite(Event, threading.Thread):
         each_asset = round(self.balance * self.RATIO_BUY, 2)
         self.send_log(f'분할 매수액 : {each_asset}')
 
-        cur_price = self.coin.get_current_price()
+        cur_price = self.check_last_price = self.coin.get_current_price()
         self.avg_price = cur_price = get_above_tick_price(cur_price)  # 호가 위 매수
         buying_amount = get_buying_amount(each_asset, cur_price, 1)
         if self.do_buy(cur_price, buying_amount) != True:
@@ -82,25 +94,25 @@ class EventInfinite(Event, threading.Thread):
     def order_sell(self):
         # order sell
         # until progess / sell margin
-        #           25% /         10%
-        #           50% /          7%
-        #           75% /          5%
-        #          100% /          3%
+        #        0-25%  /          6%
+        #        5-50%  /          4%
+        #       50-75%  /          3%
+        #      75-100%  /          1%
         if self.buy_count > ((PER_BUY // 4) * 3) :
-            selling_price = price_round(self.avg_price * 1.03) # sell margin 3%
+            selling_price = price_round(self.avg_price * SELL_MARGIN[0]) # sell margin 1%
         elif self.buy_count > ((PER_BUY // 4) * 2) :
-            selling_price = price_round(self.avg_price * 1.05) # sell margin 5%
+            selling_price = price_round(self.avg_price * SELL_MARGIN[1]) # sell margin 3%
         elif self.buy_count > ((PER_BUY // 4) * 1) :
-            selling_price = price_round(self.avg_price * 1.07) # sell margin 7%
+            selling_price = price_round(self.avg_price * SELL_MARGIN[2]) # sell margin 4%
         else:
-            selling_price = price_round(self.avg_price * 1.1)  # sell margin 10%
+            selling_price = price_round(self.avg_price * SELL_MARGIN[3]) # sell margin 6%
         ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount)  # 매도
         return ret['uuid']
 
     def order_buy(self, buying_asset):
         # order buy
         ret = False
-        cur_price = self.coin.get_current_price()  # 현재 가격
+        cur_price = self.check_cur_price = self.coin.get_current_price()  # 현재 가격
         above_tick_price = get_above_tick_price(cur_price)  # 현재 가격보다 1호가 위 (바로 매수하기 위해)
         if self.buy_count > PER_BUY // 2:
             BUY_PERCENT = [1, 1]  # AVG_PRICE, AVG_PRICE
@@ -121,6 +133,28 @@ class EventInfinite(Event, threading.Thread):
                 self.trade_flag = False
                 break
             time.sleep(10) # check order_status per 10 seconds
+
+    def get_change_interval(self, prev_price, cur_price, interval):
+        if prev_price < cur_price:
+            self.up_down_cnt = self.up_down_cnt + 1
+        elif prev_price > cur_price:
+            self.up_down_cnt = self.up_down_cnt - 1
+        
+        # continuosly fall price over 3 times, it jugdes to be into bear market
+        if self.up_down_cnt == -BASIS_JUDGE_TENDENCY:
+            self.up_down_cnt = 0
+            if MAX_TIME_INTERVAL >= (interval + TIME_INTERVAL_UNIT):
+                interval = interval + TIME_INTERVAL_UNIT
+                logging.info(f'{self.coin_name} : time interval change to {interval}')
+
+        # continuosly rise price over 3 times, it jugdes to be into bear market
+        if self.up_down_cnt == BASIS_JUDGE_TENDENCY:
+            self.up_down_cnt = 0
+            if MIN_TIME_INTERVAL <= (interval - TIME_INTERVAL_UNIT):
+                interval = interval - TIME_INTERVAL_UNIT
+                logging.info(f'{self.coin_name} : time interval change to {interval}')
+
+        return interval
 
     def __trading(self):
         buying_asset = self.init_trade()
@@ -155,6 +189,9 @@ class EventInfinite(Event, threading.Thread):
                 self.account.cancel_order(uuid)
                 time.sleep(1)
                 self.order_buy(buying_asset)
+                # change time interval according to rise / fall of price
+                self.interval = self.get_change_interval(self.check_last_price, self.check_cur_price, self.interval)
+                self.check_last_price = self.check_cur_price
 
         if self.buy_count >= PER_BUY:
             logging.info(f'{self.coin_name} is going to endless selling')

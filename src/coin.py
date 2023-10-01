@@ -27,4 +27,5 @@ class Coin:
             price = pyupbit.get_current_price(self.ticker)
             return price
         except Exception as e:
+            logging.info('coin.get_current_price()')
             logging.error(e)
