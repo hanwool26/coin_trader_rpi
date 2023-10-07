@@ -44,7 +44,7 @@ class EventInfinite(Event, threading.Thread):
         self.running = False
         self.threads = [
             threading.Thread(target=self.__trading, daemon=True),
-            threading.Thread(target=self.__show_info, daemon=True),
+            # threading.Thread(target=self.__show_info, daemon=True),
         ]
 
         self.sold_flag = False
@@ -219,7 +219,7 @@ class EventInfinite(Event, threading.Thread):
         self.send_log('무한 매수 종료')
         self.running = False
         if sold_flag == False:
-            self.sold_price = self.avg_price = self.buy_count = self.total_amount = 0
+            self.sold_price = self.avg_price = self.buy_count = self.total_amount = self.up_down_cnt = self.check_cur_price = self.check_last_price = 0
         elif sold_flag == True:
             self.sold_flag = True
             self.sold_price = self.coin.get_current_price()
@@ -243,4 +243,4 @@ class EventInfinite(Event, threading.Thread):
         with self.t_condition:
             self.t_condition.wait()
 
-        print('exit main thread of infinite trade')
+        logging.info('exit main thread of infinite trade')
