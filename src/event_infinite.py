@@ -7,10 +7,10 @@ import threading
 HOUR = 60 * 60
 MONITORING_INTERVAL = 10 # 10 sec
 
-SELL_MARGIN = [1.01, 1.03, 1.04, 1.06] # 1% 3% 4% 6%
-TIME_INTERVAL_UNIT = 8 * HOUR
-MIN_TIME_INTERVAL = 8 * HOUR
-MAX_TIME_INTERVAL = 56 * HOUR
+SELL_MARGIN = [1.02, 1.03, 1.04, 1.05] # 2% 3% 4% 6%
+TIME_INTERVAL_UNIT = (4 * HOUR) // MONITORING_INTERVAL
+MIN_TIME_INTERVAL = (4 * HOUR) // MONITORING_INTERVAL
+MAX_TIME_INTERVAL = (48 * HOUR) // MONITORING_INTERVAL
 
 
 # basis to judge rise or fall tendency
@@ -135,6 +135,8 @@ class EventInfinite(Event, threading.Thread):
             time.sleep(10) # check order_status per 10 seconds
 
     def get_change_interval(self, prev_price, cur_price, interval):
+        new_interval = interval
+
         if prev_price < cur_price:
             self.up_down_cnt = self.up_down_cnt + 1
         elif prev_price > cur_price:
@@ -143,18 +145,22 @@ class EventInfinite(Event, threading.Thread):
         # continuosly fall price over 3 times, it jugdes to be into bear market
         if self.up_down_cnt == -BASIS_JUDGE_TENDENCY:
             self.up_down_cnt = 0
-            if MAX_TIME_INTERVAL >= (interval + TIME_INTERVAL_UNIT):
-                interval = interval + TIME_INTERVAL_UNIT
-                logging.info(f'{self.coin_name} : time interval change to {interval}')
+            if MAX_TIME_INTERVAL > (interval + TIME_INTERVAL_UNIT):
+                new_interval = interval + TIME_INTERVAL_UNIT
+            else :
+                new_interval = MAX_TIME_INTERVAL
 
         # continuosly rise price over 3 times, it jugdes to be into bear market
         if self.up_down_cnt == BASIS_JUDGE_TENDENCY:
             self.up_down_cnt = 0
-            if MIN_TIME_INTERVAL <= (interval - TIME_INTERVAL_UNIT):
-                interval = interval - TIME_INTERVAL_UNIT
-                logging.info(f'{self.coin_name} : time interval change to {interval}')
+            if MIN_TIME_INTERVAL < (interval - TIME_INTERVAL_UNIT):
+                new_interval = interval - TIME_INTERVAL_UNIT
+            else :
+                new_interval = MIN_TIME_INTERVAL
 
-        return interval
+        if new_interval != interval :
+            logging.info(f'{self.coin_name} : time interval changed from {(interval * MONITORING_INTERVAL)// HOUR} to {(new_interval * MONITORING_INTERVAL)// HOUR}')
+        return new_interval
 
     def __trading(self):
         buying_asset = self.init_trade()
