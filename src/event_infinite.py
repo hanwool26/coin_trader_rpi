@@ -117,7 +117,7 @@ class EventInfinite(Event, threading.Thread):
         if self.buy_count > PER_BUY // 2:
             BUY_PERCENT = [1, 1]  # AVG_PRICE, AVG_PRICE
         else:
-            BUY_PERCENT = [1, 1.05]  # AVG_PRICE, AVG_PRICE * 5%
+            BUY_PERCENT = [1, 1.04]  # AVG_PRICE, AVG_PRICE * 4%
 
         for percent in BUY_PERCENT:
             if cur_price <= (self.avg_price * percent):
